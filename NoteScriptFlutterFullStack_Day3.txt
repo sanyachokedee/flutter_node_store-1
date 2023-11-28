@@ -231,7 +231,13 @@ Flutter_Node_Store
 +---pubspect.yaml
 +---README.md
 
-
+-------------------------------------------------------
+✈ DAY 3
+-------------------------------------------------------
+Section 7: Workshop CRUD ข้อมูลสินค้าจาก NodeJS API
+Section 8: Workshop CRUD ข้อมูลสินค้าจาก NodeJS API (ต่อ)
+Section 9: จัดการ State ด้วย Provider
+-------------------------------------------------------
 
 
 
