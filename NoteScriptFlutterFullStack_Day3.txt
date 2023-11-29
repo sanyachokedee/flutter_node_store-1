@@ -251,6 +251,7 @@ Flutter_Node_Store
 +---ios
 +---lib
 |   +---components
+|   |   +---custom_textfield.dart
 |   |   +---mobile_layout.dart
 |   |   +---responsive_layout.dart
 |   |   +---rounded_button.dart
@@ -258,6 +259,9 @@ Flutter_Node_Store
 |   |   \---web_layout.dart
 |   +---models
 |   +---screens
+|   |   +---forgotpassword
+|   |   |   +---forgot_password_form.dart
+|   |   |   \----forgot_password_screen.dart
 |   |   +---login
 |   |   |   +---login_form.dart
 |   |   |   \---login_screen.dart
@@ -421,7 +425,7 @@ Step 9: สร้างไฟล์ utility.dart สำหรับกำหน�
 ---
 |   \---utils
 |   |   |   +---constants.dart
-|   |   |   +---utility.dar
+|   |   |   +---utility.dart
 
 กำหนดโค้ดดังนี้
 ---
