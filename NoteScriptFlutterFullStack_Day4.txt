@@ -612,3 +612,655 @@ Section 10: การทำแอพให้รองรับหลายภ�
 Section 11: จัดการ State และ Route ด้วย GetX
 -------------------------------------------------------
 Section 8: Workshop CRUD ข้อมูลสินค้าจาก NodeJS API (ต่อ)
+
+Step 1: ย้าย logger จาก main.dart ไปเก็บไว้ที่ไฟล์ utility.dart
+---
+class Utility {
+
+  // Logger
+  final logger = Logger(
+    printer: PrettyPrinter(
+      methodCount: 1,
+      colors: true,
+      printEmojis: true,
+      printTime: false,
+    )
+  );
+
+  // Test Logger
+  void testLogger() {
+    logger.t('Verbose log');
+    logger.d('Debug log');
+    logger.i('Info log');
+    logger.w('Warning log');
+    logger.e('Error log');
+    logger.f('What a terrible failure log');
+  }
+
+.
+.
+.
+}
+
+Step 2: ทดสอบเรียก logger ที่ไฟล์ main.dart
+---
+import 'package:flutter_node_store/utils/utility.dart';
+
+void main() async {
+   Utility().testLogger();
+}
+
+Step 3: แก้ไขการเรียกใช้ logger ที่ไฟล์ dio_config.dart, rest_api.dart และ register_form.dart
+---
+Utility().logger.e('Bad Request');
+..
+Utility().logger.d(response.data);
+..
+Utility().logger.i(body);
+
+Step 4: แก้ไข Alert Dialog ในไฟล์ utility.dart
+---
+class Utility {
+.
+.
+.
+
+// Alert Dialog
+  static showAlertDialog(context, title, content) {
+    AlertDialog buildAlertDialog(Color backgroundColor, IconData icon) {
+      return AlertDialog(
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(
+            Radius.circular(15.0),
+          ),
+        ),
+        content: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            CircleAvatar(
+              backgroundColor: backgroundColor,
+              radius: 35,
+              child: Icon(
+                icon,
+                size: 40,
+                color: Colors.white,
+              ),
+            ),
+            Text(content),
+          ],
+        ),
+        actions: [
+          Center(
+            child: TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('ตกลง'),
+            ),
+          ),
+        ],
+      );
+    }
+    switch (title) {
+      case "ok":
+        return showDialog(
+          context: context,
+          builder: (BuildContext context) => FractionallySizedBox(heightFactor: 0.4, child: buildAlertDialog(Colors.green[700]!, Icons.check)),
+        );
+      case "error":
+        return showDialog(
+          context: context,
+          builder: (BuildContext context) => FractionallySizedBox(heightFactor: 0.4, child: buildAlertDialog(Colors.red[700]!, Icons.close)),
+        );
+      default:
+        return showDialog(
+          context: context,
+          builder: (BuildContext context) => FractionallySizedBox(heightFactor: 0.4, child: buildAlertDialog(Colors.blue[700]!, Icons.info_outline)),
+        );
+    }
+  }
+
+}
+
+Step 5: แก้ไขไฟล์ responsive_layout.dart
+เพื่อซ่อน keyboard เมื่อกดพื้นที่อื่นนอกฟอร์ม
+---
+return Scaffold(
+body: GestureDetector(
+onTap: () {
+          // ปิดคีย์บอร์ดเมื่อกดที่พื้นที่อื่น
+          FocusScope.of(context).unfocus();
+        },
+        child: Container(
+.
+.
+)
+}
+
+Step 6: อัพเดท login api ในไฟล์ lib/services/rest_api.dart
+---
+  // Login API
+  loginAPI(data) async {
+    // Check Network Connection
+    if(await Utility.checkNetwork() == ''){
+      return jsonEncode(
+        {'message': 'No Network Connection'}
+      );
+    }else{
+      try {
+        final response = await _dio.post('auth/login', data: data);
+        logger.d(response.data);
+        return jsonEncode(response.data);
+      } catch (e) {
+        logger.e(e);
+      }
+    }
+  }
+
+Step 7: อัพเดทไฟล์ login_form.dart
+---
+RoundedButton(
+                    label: "LOGIN",
+                    onPressed: () async {
+                      // ตรวจสอบข้อมูลฟอร์ม
+                      if (_formKeyLogin.currentState!.validate()) {
+                        // ถ้าข้อมูลผ่านการตรวจสอบ ให้ทำการบันทึกข้อมูล
+                        _formKeyLogin.currentState!.save();
+
+                        // ส่งข้อมูลไปยัง API เพื่อทำการตรวจสอบ
+                        var response = await CallAPI().loginAPI(
+                          {
+                            "email": _emailController.text,
+                            "password": _passwordController.text
+                          }
+                        );
+
+                        // ตรวจสอบค่าที่ได้จาก API
+                        var body = jsonDecode(response);
+
+                        Utility().logger.i(body);
+
+                        if (body["message"] == "No Network Connection") {
+                          // แจ้งเตือนว่าไม่มีการเชื่อมต่อ Internet
+                            Utility.showAlertDialog(context, '', '${body["message"]}');
+                        } else {
+                          if (body["status"] == "ok") {
+                            // แจ้งเตือนว่าเข้าสู่ระบบสำเร็จ
+                            Utility.showAlertDialog(context, body["status"], '${body["message"]}');
+                          } else {
+                            // แจ้งเตือนว่าเข้าสู่ระบบไม่สำเร็จ
+                            Utility.showAlertDialog(context, body["status"], '${body["message"]}');
+                          }
+                        }
+
+                      }
+  })
+
+Step 8: อัพเดทไฟล์ utility.dart เก็บส่วนการสร้าง SharedPreference ไว้ที่นี่
+---
+class Utility {
+.
+.
+
+// Shared Preferences ==============
+  static SharedPreferences? _preferences;
+  static Future initSharedPrefs() async => _preferences = await SharedPreferences.getInstance();
+
+  // Get Shared Preferences
+  static dynamic getSharedPreference(String key) {
+    if(_preferences == null) return null;
+    return _preferences!.get(key);
+  }
+
+  // Set Shared Preferences
+  static Future<bool> setSharedPreference(String key, dynamic value) async {
+    if(_preferences == null) return false;
+    if(value is String) return await _preferences!.setString(key, value);
+    if(value is int) return await _preferences!.setInt(key, value);
+    if(value is bool) return await _preferences!.setBool(key, value);
+    if(value is double) return await _preferences!.setDouble(key, value);
+    return false;
+  }
+
+  // Remove Shared Preferences
+  static Future<bool> removeSharedPreference(String key) async {
+    if(_preferences == null) return false;
+    return await _preferences!.remove(key);
+  }
+
+  // Clear Shared Preferences
+  static Future<bool> clearSharedPreference() async {
+    if(_preferences == null) return false;
+    return await _preferences!.clear();
+  }
+
+  // Check Shared Preferences
+  static Future<bool> checkSharedPreference(String key) async {
+    if(_preferences == null) return false;
+    return await _preferences!.containsKey(key);
+  }
+
+  // ================================
+.
+.
+}
+
+Step 9: เรียกใช้ SharedPreference ที่หน้า main.dart
+---
+void main() async {
+.
+.
+// เรียกใช้ SharedPreferences
+  await Utility.initSharedPrefs();
+
+  // ตรวจสอบว่าเคยแสดง Intro แล้วหรือยัง 
+  if (Utility.getSharedPreference('welcomeStatus') == true) {
+    initialRoute = AppRouter.login;
+  } else {
+    initialRoute = AppRouter.welcome;
+  }
+.
+.
+}
+
+Step 10: เรียกใช้ SharedPreference ที่หน้า welcome_screen.dart
+---
+void _onIntroEnd(context) async {
+
+    // Set ค่าให้กับ SharedPreferences เพื่อบอกว่าเคยแสดง Intro แล้ว
+    await Utility.setSharedPreference('welcomeStatus', true);
+
+.
+.
+  } 
+
+Step 11: สร้างหน้า dashboard_screen.dart
+---
+import 'package:flutter/material.dart';
+
+class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Dashboard'),
+      ),
+      body: const Center(
+        child: Text('Dashboard Screen'),
+      )
+    );
+  }
+}
+
+Step 12: กำหนด router ที่ไฟล์ app_router.dart
+---
+class AppRouter {
+  
+  // Router Map Key
+...
+  static const String dashboard = 'dashboard';
+ 
+  // Router Map
+  static get routes => {
+   ...
+    dashboard: (context) => const DashboardScreen(),
+  };
+
+}
+
+Step 13: Set ค่าให้กับ SharedPreferences ในหน้า login_form เพื่อเช็คว่าผ่านการ login แล้ว
+---
+if (body["status"] == "ok") {
+
+ await Utility.setSharedPreference('loginStatus', true);
+                            await Utility.setSharedPreference('token', body["token"]);
+                            await Utility.setSharedPreference('user', body["user"]);
+
+                            // ส่งไปหน้า Dashboard
+                            Navigator.pushReplacementNamed(context, AppRouter.dashboard);
+
+}
+
+
+Step 14: กำหนดเงื่อนไขการแสดงหน้าแรก initialRoute ที่ไฟล์ main.dart
+---
+  if (Utility.getSharedPreference('loginStatus') == true) { // ตรวจสอบว่าเคย Login แล้วหรือยัง
+    initialRoute = AppRouter.dashboard;
+  } else if(Utility.getSharedPreference('welcomeStatus') == true) { // ตรวจสอบว่าเคยแสดง Intro แล้วหรือยัง 
+    initialRoute = AppRouter.login;
+  } else { // ถ้ายังไม่เคยแสดง Intro ให้แสดง Intro ก่อน
+    initialRoute = AppRouter.welcome;
+  }
+
+Step 15: สร้างหน้าในส่วนเมนูด้านข้าง (drawerpage) ไว้ในโฟลเดอร์ drawerpage
+---
+info_screen.dart
+about_screen.dart
+contact_screen.dart
+
+---
+import 'package:flutter/material.dart';
+
+class InfoScreen extends StatelessWidget {
+  const InfoScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Info'),
+      ),
+      body: const Center(
+        child: Text('Info Screen'),
+      )
+    );
+  }
+}
+
+Step 16: เพิ่มส่วน app_router.dart
+---
+class AppRouter {
+..
+  static const String info = 'info';
+  static const String about = 'about';
+  static const String contact = 'contact';
+
+static get routes => {
+    info: (context) => const InfoScreen(),
+    about: (context) => const AboutScreen(),
+    contact: (context) => const ContactScreen(),
+};
+..
+}
+
+Step 17: เพิ่มส่วน drawer ที่ไฟล์ dashboard_screen.dart
+---
+      drawer: Drawer(
+        // backgroundColor: primary,
+        child: Column(
+          children: [
+            ListView(
+              shrinkWrap: true,
+              children: [
+                UserAccountsDrawerHeader(
+                  decoration: BoxDecoration(
+                    color: Colors.teal,
+                  ),
+                  accountName: Text('Samit Koyom'),
+                  accountEmail: Text('samit@email.com'),
+                  currentAccountPicture: CircleAvatar(
+                    backgroundImage: AssetImage('assets/images/noavartar.png'),
+                  ),
+                  otherAccountsPictures: [
+                    CircleAvatar(
+                      backgroundImage:
+                          AssetImage('assets/images/noavartar.png'),
+                    ),
+                  ],
+                ),
+                ListTile(
+                  leading: Icon(Icons.info_outline),
+                  title: Text('Info'),
+                  onTap: () {
+                    Navigator.pushNamed(context, AppRouter.info);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.person_outline),
+                  title: Text('About'),
+                  onTap: () {
+                    Navigator.pushNamed(context, AppRouter.about);
+                  },
+                ),
+                ListTile(
+                  leading: Icon(Icons.email_outlined),
+                  title: Text('Contact'),
+                  onTap: () {
+                    Navigator.pushNamed(context, AppRouter.contact);
+                  },
+                ),
+              ],
+            ),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  ListTile(
+                    leading: Icon(Icons.exit_to_app_outlined),
+                    title: Text('Logout'),
+                    onTap: _logout,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+
+
+Step 18: เพิ่มส่วนฟังก์ชัน _logout ที่ไฟล์ dashboard_screen.dart
+---
+  // Logout Function   // Logout Function -----------------------------------------------------------
+  _logout() {
+    // Remove token, loginStatus shared preference
+    Utility.removeSharedPreference('token');
+    Utility.removeSharedPreference('loginStatus');
+
+    // Clear All Route
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      AppRouter.login,
+      (route) => false,
+    );
+  }
+  // ---------------------------------------------------------------------------
+
+Step 19: สร้างหน้าส่วน bottomnavpage
+---
+home_screen.dart
+report_screen.dart
+notification_screen.dart
+setting_screen.dart
+profile_screen.dart
+
+---
+import 'package:flutter/material.dart';
+
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: Text('Home Screen'),
+      ),
+    );
+  }
+}
+
+Step 20: ส่วนของการโหลดสลับข้อมูลใน bottomNavigationBar
+---
+// สร้างตัวแปรเก็บ title ของแต่ละหน้า
+  String _title = 'Flutter Store';
+
+  // สร้างตัวแปรเก็บ index ของแต่ละหน้า
+  int _currentIndex = 0;
+
+  // สร้าง List ของแต่ละหน้า
+  final List<Widget> _children = [
+    HomeScreen(),
+    ReportScreen(),
+    NotificationScreen(),
+    SettingScreen(),
+    ProfileScreen()
+  ];
+
+  // ฟังก์ขันในการเปลี่ยนหน้า โดยรับค่า index จากการกดที่ bottomNavigationBar
+  void onTabTapped(int index) {
+    setState(
+      () {
+        _currentIndex = index;
+        switch (index) {
+          case 0:
+            _title = 'Home';
+            break;
+          case 1:
+            _title = 'Report';
+            break;
+          case 2:
+            _title = 'Notification';
+            break;
+          case 3:
+            _title = 'Setting';
+            break;
+          case 4:
+            _title = 'Profile';
+            break;
+          default:
+            _title = 'Flutter Store';
+            break;
+        }
+      },
+    );
+  }
+
+Step 21: กำหนด bottom tab
+---
+appBar: AppBar(
+    title: Text(_title),
+),
+
+body: _children[_currentIndex],
+
+bottomNavigationBar: BottomNavigationBar(
+        onTap: (value) {
+          onTabTapped(value);
+        },
+        currentIndex: _currentIndex,
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: primaryDark,
+        unselectedItemColor: secondaryText,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home_outlined),
+            label: 'Home'
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.show_chart_outlined),
+            label: 'Report'
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.notifications_outlined),
+            label: 'Notification'
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.settings_outlined),
+            label: 'Setting'
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: 'Profile'
+          ),
+        ]
+      ),
+
+Step 22: Create GridView and ListView in home_screen.dart
+---
+
+// Toggle between ListView and GridView
+  bool _isGridView = true;
+
+  // สร้างฟังก์ชันสลับระหว่าง ListView และ GridView
+  void _toggleView(){
+    setState(() {
+      _isGridView = !_isGridView;
+    });
+  }
+
+ @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          onPressed: _toggleView, 
+          icon: Icon(_isGridView ? Icons.list_outlined: Icons.grid_view)
+        ),
+        title: const Text('สินค้า'),
+        actions: [
+          IconButton(
+            onPressed: (){
+              // 
+            }, 
+            icon: const Icon(Icons.add)
+          )
+        ],
+      ),
+      body: _isGridView ? _gridView() : _listView(),
+    );
+  }
+
+// _listView Widget -----------------------------------------------------------
+  Widget _listView(){
+    return ListView.builder(
+      itemCount: 12,
+      itemBuilder: (context, index){
+        return Padding(
+          padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
+          child: SizedBox(
+            height: 350,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Colors.grey,
+                    offset: Offset(0, 1),
+                    blurRadius: 2,
+                  )
+                ]
+              ),
+            ),
+          )
+        );
+      }
+    );
+  }
+  // ---------------------------------------------------------------------------
+
+  // _gridView Widget -----------------------------------------------------------
+  Widget _gridView(){
+    return GridView.builder(
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2 // จำนวนคอลัมน์
+      ), 
+      itemCount: 12,
+      itemBuilder: (context, index){
+        return Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.grey,
+                  offset: Offset(0, 1),
+                  blurRadius: 2,
+                )
+              ]
+            ),
+          ),
+        );
+      }
+    );
+  }
+  // ---------------------------------------------------------------------------

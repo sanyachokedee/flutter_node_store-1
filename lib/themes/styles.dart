@@ -11,7 +11,7 @@ class AppTheme {
       fontSize: 16,
     ),
     bodyLarge: TextStyle(
-      fontSize: 24,
+      fontSize: 18,
     ),
   );
 
@@ -32,7 +32,7 @@ class AppTheme {
         color: icons,
         fontFamily: 'NotoSansThai',
         fontWeight: FontWeight.bold,
-        fontSize: 20,
+        fontSize: 18,
       ),
       backgroundColor: primary,
       foregroundColor: icons,
@@ -57,7 +57,7 @@ class AppTheme {
         color: icons,
         fontFamily: 'NotoSansThai',
         fontWeight: FontWeight.bold,
-        fontSize: 20,
+        fontSize: 18,
       ),
       backgroundColor: primaryText,
       foregroundColor: icons,
