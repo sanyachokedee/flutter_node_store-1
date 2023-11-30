@@ -20,8 +20,10 @@ void main() async {
   // เรียกใช้ SharedPreferences
   await Utility.initSharedPrefs();
 
-  // ตรวจสอบว่าเคยแสดง Intro แล้วหรือยัง 
-  if(Utility.getSharedPreference('welcomeStatus') == true) {
+  // ถ้าเคย Login แล้ว ให้ไปยังหน้า Dashboard
+  if(Utility.getSharedPreference('loginStatus') == true){
+    initialRoute = AppRouter.dashboard;
+  } else if(Utility.getSharedPreference('welcomeStatus') == true) {
     // ถ้าเคยแสดง Intro แล้ว ให้ไปยังหน้า Login
     initialRoute = AppRouter.login;
   } else {

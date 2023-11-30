@@ -17,8 +17,8 @@ class LoginForm extends StatelessWidget {
   final _formKeyLogin = GlobalKey<FormState>();
 
   // สร้าง TextEditingController
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _emailController = TextEditingController(text: 'samit@email.com');
+  final _passwordController = TextEditingController(text: '123456');
 
   @override
   Widget build(BuildContext context) {
@@ -121,8 +121,18 @@ class LoginForm extends StatelessWidget {
                           Utility.showAlertDialog(context, '', '${body["message"]}');
                         } else {
                           if (body["status"] == "ok") {
+                            
                             // แจ้งเตือนว่าเข้าสู่ระบบสำเร็จ
                             Utility.showAlertDialog(context, body["status"], '${body["message"]}');
+
+                            // บันทึกข้อมูลลงในตัวแปร SharedPreferences
+                            await Utility.setSharedPreference('loginStatus', true);
+                            await Utility.setSharedPreference('token', body["token"]);
+                            await Utility.setSharedPreference('user', body["user"]);
+
+                            // ส่งไปหน้า Dashboard
+                            Navigator.pushReplacementNamed(context, AppRouter.dashboard);
+
                           }else{
                             // แจ้งเตือนว่าเข้าสู่ระบบไม่สำเร็จ
                             Utility.showAlertDialog(context, body["status"], '${body["message"]}');
