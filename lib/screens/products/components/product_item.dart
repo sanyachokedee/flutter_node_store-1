@@ -1,5 +1,3 @@
-// ignore_for_file: unnecessary_null_comparison, prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'package:flutter_node_store/components/image_not_found.dart';
 import 'package:flutter_node_store/models/product_model.dart';
@@ -60,7 +58,7 @@ class ProductItem extends StatelessWidget {
         SizedBox(
           width: double.infinity,
           height: height,
-          child: image != null && image.isNotEmpty ? _image(image) : ImageNotFound(),
+          child: image != null && image.isNotEmpty ? _image(image) : const ImageNotFound(),
         )
       ],
     );
@@ -77,7 +75,7 @@ class ProductItem extends StatelessWidget {
     }
     return Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(5),
           topRight: Radius.circular(5),
         ),
@@ -92,7 +90,7 @@ class ProductItem extends StatelessWidget {
   // _buildInfo Widget
   Expanded _buildInfo() => Expanded(
     child: Padding(
-      padding: EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(8.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,10 +98,10 @@ class ProductItem extends StatelessWidget {
           Text(
             product.name ?? '',
             style: (isGrid ?? false) 
-            ? TextStyle(
+            ? const TextStyle(
               fontSize: 14.0,
               fontWeight: FontWeight.normal
-            ) : TextStyle(
+            ) : const TextStyle(
               fontSize: 20.0,
               fontWeight: FontWeight.bold
             ),
@@ -117,7 +115,7 @@ class ProductItem extends StatelessWidget {
                 onPressed: (){},
                 child: Text(
                   '฿${product.price}',
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 14.0,
                     fontWeight: FontWeight.bold
                   ),
@@ -125,7 +123,7 @@ class ProductItem extends StatelessWidget {
               ),
               Text(
                 '${product.stock} ชิ้น',
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 14.0,
                   fontWeight: FontWeight.bold,
                   color: Colors.indigo
@@ -137,6 +135,4 @@ class ProductItem extends StatelessWidget {
       ),
     )
   );
-
-
 }
