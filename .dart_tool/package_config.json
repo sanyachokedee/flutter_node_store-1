@@ -351,7 +351,7 @@
     },
     {
       "name": "win32",
-      "rootUri": "file:///C:/Users/m0989/AppData/Local/Pub/Cache/hosted/pub.dev/win32-5.1.0",
+      "rootUri": "file:///C:/Users/m0989/AppData/Local/Pub/Cache/hosted/pub.dev/win32-5.1.1",
       "packageUri": "lib/",
       "languageVersion": "3.1"
     },
@@ -363,9 +363,9 @@
     },
     {
       "name": "xml",
-      "rootUri": "file:///C:/Users/m0989/AppData/Local/Pub/Cache/hosted/pub.dev/xml-6.4.2",
+      "rootUri": "file:///C:/Users/m0989/AppData/Local/Pub/Cache/hosted/pub.dev/xml-6.5.0",
       "packageUri": "lib/",
-      "languageVersion": "3.0"
+      "languageVersion": "3.2"
     },
     {
       "name": "flutter_node_store",
@@ -374,7 +374,7 @@
       "languageVersion": "3.2"
     }
   ],
-  "generated": "2023-12-01T04:47:24.480720Z",
+  "generated": "2023-12-06T01:26:27.868501Z",
   "generator": "pub",
   "generatorVersion": "3.2.1"
 }

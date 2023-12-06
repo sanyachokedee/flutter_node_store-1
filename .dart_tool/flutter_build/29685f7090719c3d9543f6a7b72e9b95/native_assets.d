@@ -1,0 +1,1 @@
+ D:\\002-DEV\\041-Flutter3FullStack\\flutter_node_store\\.dart_tool\\flutter_build\\29685f7090719c3d9543f6a7b72e9b95\\native_assets.yaml: 

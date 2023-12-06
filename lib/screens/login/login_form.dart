@@ -1,4 +1,4 @@
-// ignore_for_file: unused_field, must_be_immutable
+// ignore_for_file: unused_field, must_be_immutable, use_build_context_synchronously
 
 import 'dart:convert';
 
@@ -17,8 +17,8 @@ class LoginForm extends StatelessWidget {
   final _formKeyLogin = GlobalKey<FormState>();
 
   // สร้าง TextEditingController
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final _emailController = TextEditingController(text: 'samit@email.com');
+  final _passwordController = TextEditingController(text: '123456');
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +47,9 @@ class LoginForm extends StatelessWidget {
                   textInputType: TextInputType.emailAddress,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return "กรุณากรอกอีเมล์";
+                      return "กรุณากรอกอีเมล";
                     } else if (!value.contains("@")) {
-                      return "กรุณากรอกอีเมล์ให้ถูกต้อง";
+                      return "กรุณากรอกอีเมลให้ถูกต้อง";
                     }
                     return null;
                   },
@@ -80,8 +80,7 @@ class LoginForm extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         //Open Forgot password screen here
-                        Navigator.pushReplacementNamed(
-                            context, AppRouter.forgotpassword);
+                        Navigator.pushNamed(context, AppRouter.forgotPassword);
                       },
                       child: const Text("ลืมรหัสผ่าน ?"),
                     )
@@ -92,15 +91,54 @@ class LoginForm extends StatelessWidget {
                 ),
                 RoundedButton(
                     label: "LOGIN",
-                    onPressed: () {
+                    onPressed: () async {
                       // ตรวจสอบข้อมูลฟอร์ม
                       if (_formKeyLogin.currentState!.validate()) {
                         // ถ้าข้อมูลผ่านการตรวจสอบ ให้ทำการบันทึกข้อมูล
                         _formKeyLogin.currentState!.save();
 
                         // แสดงข้อมูลที่บันทึกใน Console
-                        print("Email: ${_emailController.text}");
-                        print("Password: ${_passwordController.text}");
+                        // print("Email: ${_emailController.text}");
+                        // print("Password: ${_passwordController.text}");
+
+                        // ส่งข้อมูลไปยัง API เพื่อทำการตรวจสอบ
+                        var response = await CallAPI().loginAPI({
+                          "email": _emailController.text,
+                          "password": _passwordController.text
+                        });
+
+                        // ตรวจสอบค่าที่ได้จาก API
+                        var body = jsonDecode(response);
+
+                        Utility().logger.i(body);
+
+                        if (body["message"] == "No Network Connection") {
+                          // แจ้งเตือนว่าไม่มีการเชื่อมต่อ Internet
+                          Utility.showAlertDialog(
+                              context, '', '${body["message"]}');
+                        } else {
+                          if (body["status"] == "ok") {
+                            // แจ้งเตือนว่าเข้าสู่ระบบสำเร็จ
+                            Utility.showAlertDialog(
+                                context, body["status"], '${body["message"]}');
+
+                            // บันทึกข้อมูลลงในตัวแปร SharedPreferences
+                            await Utility.setSharedPreference(
+                                'loginStatus', true);
+                            await Utility.setSharedPreference(
+                                'token', body["token"]);
+                            await Utility.setSharedPreference(
+                                'user', body["user"]);
+
+                            // ส่งไปหน้า Dashboard
+                            Navigator.pushReplacementNamed(
+                                context, AppRouter.dashboard);
+                          } else {
+                            // แจ้งเตือนว่าเข้าสู่ระบบไม่สำเร็จ
+                            Utility.showAlertDialog(
+                                context, body["status"], '${body["message"]}');
+                          }
+                        }
                       }
                     })
               ])),
@@ -116,56 +154,9 @@ class LoginForm extends StatelessWidget {
             children: [
               const Text("ยังไม่มีบัญชีกับเรา ? "),
               InkWell(
-                onTap: () async {
+                onTap: () {
                   //Open Sign up screen here
-                  // Navigator.pushNamed(context, AppRouter.register);
-
-// ตรวจสอบข้อมูลฟอร์ม
-                  if (_formKeyLogin.currentState!.validate()) {
-                    // ถ้าข้อมูลถูกต้อง ให้ทำการบันทึกข้อมูล
-                    _formKeyLogin.currentState!.save();
-
-                    // แสดงข้อมูลที่บันทึกได้ทาง Console
-                    // print("First Name: ${_firstNameController.text}");
-                    // print("Last Name: ${_lastNameController.text}");
-                    // print("Email: ${_emailController.text}");
-                    // print("Password: ${_passwordController.text}");
-
-                    // เรียกใช้งาน API สำหรับ Login
-                    var response = await CallAPI().loginAPI(
-                      {
-                        "email": _emailController.text,
-                        "password": _passwordController.text
-                      },
-                    );
-
-                    var body = jsonDecode(response);
-
-                    Utility().logger.i(body);
-
-                    if (body['message'] == 'No Network Connection') {
-                      // แจ้งเตือนว่าไม่มีการเชื่อมต่อ Internet
-                      // ignore: use_build_context_synchronously
-                      Utility.showAlertDialog(
-                          context, 'แจ้งเตือน', body['message']);
-                    } else {
-                      if (body['status'] == 'ok') {
-                        // แจ้งเตือนว่าลงทะเบียนสำเร็จ
-                        // Utility.showAlertDialog(
-                        //   context,
-                        //   'แจ้งเตือน',
-                        //   body['message']
-                        // );
-                        // ส่งกลับไปหน้า Login
-                        Navigator.pushReplacementNamed(
-                            context, AppRouter.login);
-                      } else {
-                        // แจ้งเตือนว่าลงทะเบียนไม่สำเร็จ
-                        Utility.showAlertDialog(
-                            context, 'แจ้งเตือน', body['message']);
-                      }
-                    }
-                  }
+                  Navigator.pushReplacementNamed(context, AppRouter.register);
                 },
                 child: const Text(
                   "สมัครสมาชิก",
