@@ -74,6 +74,7 @@ class _ProductImageState extends State<ProductImage> {
     );
   }
 
+  // ignore: non_constant_identifier_names
   Widget ReuseContainer(Widget child) => Container(
         color: Colors.grey[100],
         margin: const EdgeInsets.only(top: 4),

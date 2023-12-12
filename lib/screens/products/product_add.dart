@@ -54,6 +54,7 @@ class _ProductAddState extends State<ProductAdd> {
 
                 if (body['status'] == 'ok') {
                   if (!mounted)
+                    // ignore: curly_braces_in_flow_control_structures
                     return; // กรณีที่ออกจากหน้าจอแล้ว ไม่ต้องทำอะไรต่อ
 
                   Navigator.pop(context,

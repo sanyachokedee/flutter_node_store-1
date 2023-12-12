@@ -4,8 +4,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_node_store/app_router.dart';
+import 'package:flutter_node_store/providers/counter_provider.dart';
+import 'package:flutter_node_store/providers/locale_provider.dart';
+import 'package:flutter_node_store/providers/timer_provider.dart';
 import 'package:flutter_node_store/themes/styles.dart';
 import 'package:flutter_node_store/utils/utility.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 // import 'package:flutter_node_store/utils/utility.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 
@@ -48,11 +53,33 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
-      initialRoute: initialRoute,
-      routes: AppRouter.routes,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => CounterProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => TimerProvider(),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => LocaleProvider(
+            const Locale('en'),
+          ),
+        )
+      ],
+      child: Consumer<LocaleProvider>(
+        builder: (context, locale, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            locale: locale.locale,
+            theme: AppTheme.lightTheme,
+            initialRoute: initialRoute,
+            routes: AppRouter.routes,
+          );
+        },
+      ),
     );
   }
 }

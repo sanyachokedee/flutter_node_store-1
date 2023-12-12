@@ -9,6 +9,7 @@ import 'package:flutter_node_store/screens/bottomnavpage/report_screen.dart';
 import 'package:flutter_node_store/screens/bottomnavpage/setting_screen.dart';
 import 'package:flutter_node_store/themes/colors.dart';
 import 'package:flutter_node_store/utils/utility.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -41,19 +42,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
         _currentIndex = index;
         switch (index) {
           case 0:
-            _title = 'Home';
+            _title = AppLocalizations.of(context)!.menu_home;
             break;
           case 1:
-            _title = 'Report';
+            _title = AppLocalizations.of(context)!.menu_report;
             break;
           case 2:
-            _title = 'Notification';
+            _title = AppLocalizations.of(context)!.menu_notification;
             break;
           case 3:
-            _title = 'Setting';
+            _title = AppLocalizations.of(context)!.menu_setting;
             break;
           case 4:
-            _title = 'Profile';
+            _title = AppLocalizations.of(context)!.menu_profile;
             break;
           default:
             _title = 'Flutter Store';
@@ -101,6 +102,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       backgroundImage: AssetImage('assets/images/samitk.jpg'),
                     )
                   ],
+                ),
+                ListTile(
+                    leading: Icon(Icons.timer_outlined),
+                    title: Text('Counter (With Stateful)'),
+                    onTap: () {
+                      Navigator.pushNamed(context, AppRouter.counterStateful);
+                    }),
+                ListTile(
+                  leading: Icon(Icons.timer_outlined),
+                  title: Text('Counter (With StaleProvider)'),
+                  onTap: () {
+                    Navigator.pushNamed(context, AppRouter.counterProvider);
+                  },
                 ),
                 ListTile(
                     leading: Icon(Icons.info_outline),
@@ -152,23 +166,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
         items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
-            label: 'Home',
+            label: AppLocalizations.of(context)!.menu_home,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.bar_chart_outlined),
-            label: 'Report',
+            label: AppLocalizations.of(context)!.menu_report,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.notifications_outlined),
-            label: 'Notification',
+            label: AppLocalizations.of(context)!.menu_notification,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.settings_outlined),
-            label: 'Setting',
+            label: AppLocalizations.of(context)!.menu_setting,
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
-            label: 'Profile',
+            label: AppLocalizations.of(context)!.menu_profile,
           ),
         ],
       ),

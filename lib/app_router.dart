@@ -1,5 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:flutter_node_store/screens/counter/counter_provider_screen.dart';
+import 'package:flutter_node_store/screens/counter/counter_stateful_screen.dart';
 import 'package:flutter_node_store/screens/dashboard/dashboard_screen.dart';
 import 'package:flutter_node_store/screens/drawerpage/about_screen.dart';
 import 'package:flutter_node_store/screens/drawerpage/contact_screen.dart';
@@ -25,6 +27,8 @@ class AppRouter {
   static const String productAdd = 'productAdd';
   static const String productDetail = 'productDetail';
   static const String productUpdate = 'productUpdate';
+  static const String counterStateful = 'counterStateful';
+  static const String counterProvider = 'counterProvider';
 
   // Router Map
   static get routes => {
@@ -39,5 +43,7 @@ class AppRouter {
         productAdd: (context) => ProductAdd(),
         productDetail: (context) => ProductDetail(),
         productUpdate: (context) => ProductUpdate(),
+        counterStateful: (context) => CounterStatefulScreen(),
+        counterProvider: (context) => CounterProviderScreen(),
       };
 }

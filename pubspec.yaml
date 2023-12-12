@@ -60,7 +60,12 @@ dependencies:
   # Image Cropper
   image_cropper: ^5.0.0 
 
+  # provider
+  provider: ^6.1.1
 
+  # Flutter Localization
+  flutter_localizations:
+    sdk: flutter
 
 dev_dependencies:
   flutter_test:
@@ -83,6 +88,9 @@ flutter:
   # included with your application, so that you can use the icons in
   # the material Icons class.
   uses-material-design: true
+
+  # Generate a localization file per language
+  generate: true
 
   # To add assets to your application, add an assets section, like this:
   assets:

@@ -70,6 +70,7 @@ class _ProductUpdateState extends State<ProductUpdate> {
 
                 if (body['status'] == 'ok') {
                   if (!mounted)
+                    // ignore: curly_braces_in_flow_control_structures
                     return; // กรณีที่ออกจากหน้าจอแล้ว ไม่ต้องทำอะไรต่อ
                   // ปิดหน้าจอและส่งค่ากลับไปยังหน้าก่อนหน้า
                   Navigator.pop(context, true);

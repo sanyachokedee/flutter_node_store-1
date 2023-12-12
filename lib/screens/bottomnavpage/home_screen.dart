@@ -3,6 +3,7 @@ import 'package:flutter_node_store/app_router.dart';
 import 'package:flutter_node_store/models/product_model.dart';
 import 'package:flutter_node_store/screens/products/components/product_item.dart';
 import 'package:flutter_node_store/services/rest_api.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 // สร้างตัวแปร refreshKey สำหรับการ RefreshIndicator
 var refreshKey = GlobalKey<RefreshIndicatorState>();
@@ -32,7 +33,7 @@ class _HomeScreenState extends State<HomeScreen> {
         leading: IconButton(
             onPressed: _toggleView,
             icon: Icon(_isGridView ? Icons.list_outlined : Icons.grid_view)),
-        title: const Text('สินค้า'),
+        title: Text(AppLocalizations.of(context)!.menu_home),
         actions: [
           IconButton(
             onPressed: () {

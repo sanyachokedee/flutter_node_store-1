@@ -162,6 +162,10 @@ image_picker_windows
 2.19
 file:///C:/Users/m0989/AppData/Local/Pub/Cache/hosted/pub.dev/image_picker_windows-0.2.1+1/
 file:///C:/Users/m0989/AppData/Local/Pub/Cache/hosted/pub.dev/image_picker_windows-0.2.1+1/lib/
+intl
+2.12
+file:///C:/Users/m0989/AppData/Local/Pub/Cache/hosted/pub.dev/intl-0.18.1/
+file:///C:/Users/m0989/AppData/Local/Pub/Cache/hosted/pub.dev/intl-0.18.1/lib/
 introduction_screen
 2.12
 file:///C:/Users/m0989/AppData/Local/Pub/Cache/hosted/pub.dev/introduction_screen-3.1.12/
@@ -194,6 +198,10 @@ mime
 2.18
 file:///C:/Users/m0989/AppData/Local/Pub/Cache/hosted/pub.dev/mime-1.0.4/
 file:///C:/Users/m0989/AppData/Local/Pub/Cache/hosted/pub.dev/mime-1.0.4/lib/
+nested
+2.12
+file:///C:/Users/m0989/AppData/Local/Pub/Cache/hosted/pub.dev/nested-1.0.0/
+file:///C:/Users/m0989/AppData/Local/Pub/Cache/hosted/pub.dev/nested-1.0.0/lib/
 nm
 2.12
 file:///C:/Users/m0989/AppData/Local/Pub/Cache/hosted/pub.dev/nm-0.5.0/
@@ -226,6 +234,10 @@ plugin_platform_interface
 3.0
 file:///C:/Users/m0989/AppData/Local/Pub/Cache/hosted/pub.dev/plugin_platform_interface-2.1.7/
 file:///C:/Users/m0989/AppData/Local/Pub/Cache/hosted/pub.dev/plugin_platform_interface-2.1.7/lib/
+provider
+2.12
+file:///C:/Users/m0989/AppData/Local/Pub/Cache/hosted/pub.dev/provider-6.1.1/
+file:///C:/Users/m0989/AppData/Local/Pub/Cache/hosted/pub.dev/provider-6.1.1/lib/
 shared_preferences
 2.19
 file:///C:/Users/m0989/AppData/Local/Pub/Cache/hosted/pub.dev/shared_preferences-2.2.2/
@@ -310,6 +322,10 @@ flutter
 3.2
 file:///C:/src/flutter/packages/flutter/
 file:///C:/src/flutter/packages/flutter/lib/
+flutter_localizations
+3.2
+file:///C:/src/flutter/packages/flutter_localizations/
+file:///C:/src/flutter/packages/flutter_localizations/lib/
 flutter_test
 3.2
 file:///C:/src/flutter/packages/flutter_test/
